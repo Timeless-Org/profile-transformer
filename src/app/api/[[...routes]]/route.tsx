@@ -13,7 +13,6 @@ interface State {
 const app = new Frog<{ State: State }>({
   assetsPath: "/",
   basePath: "/api",
-  browserLocation: "/:path",
   initialState: {
     top: 50,
     left: 50,
