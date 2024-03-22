@@ -13,6 +13,7 @@ interface State {
 const app = new Frog<{ State: State }>({
   assetsPath: "/",
   basePath: "/api",
+  browserLocation: "/:path",
   initialState: {
     top: 50,
     left: 50,
@@ -56,13 +57,13 @@ app
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
       if (buttonValue === "up")
-        previousState.top >= 5 ? (previousState.top -= 5) : "";
+        previousState.top >= 2 ? (previousState.top -= 2) : "";
       if (buttonValue === "down")
-        previousState.top <= 95 ? (previousState.top += 5) : "";
+        previousState.top <= 98 ? (previousState.top += 2) : "";
       if (buttonValue === "left")
-        previousState.left >= 5 ? (previousState.left -= 5) : "";
+        previousState.left >= 2 ? (previousState.left -= 2) : "";
       if (buttonValue === "right")
-        previousState.left <= 95 ? (previousState.left += 5) : "";
+        previousState.left <= 98 ? (previousState.left += 2) : "";
       if (buttonValue === "vertical")
         previousState.direction !== "vertical"
           ? (previousState.direction = "vertical")
@@ -90,9 +91,9 @@ app
         </Button>,
         // <Button value="proceed">Proceed</Button>,
         <Button.Link
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${state.top}&pfpUrl=${pfpUrl}&left=${state.left}`}
-          // http://localhost:3000/create?top=50&amp;amp;pfpUrl=https://i.imgur.com/LwSPyFy.jpg&amp;amp;left=50
-          // http://localhost:3000/create?top=50&amp;pfpUrl=https://i.imgur.com/LwSPyFy.jpg&amp;left=50
+          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
+            state.top
+          }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${state.left}`}
         >
           Download
         </Button.Link>,
