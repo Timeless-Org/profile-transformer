@@ -24,7 +24,7 @@ app.frame("/", (c) => {
   return c.res({
     action: "/check",
     // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
-    image: "/assets/static/start.png",
+    image: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/static/start.png`,
     intents: [<Button value="action">put a cat on your shoulder</Button>],
   });
 });
