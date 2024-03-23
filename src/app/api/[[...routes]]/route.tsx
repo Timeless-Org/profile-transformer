@@ -23,7 +23,8 @@ const app = new Frog<{ State: State }>({
 app.frame("/", (c) => {
   return c.res({
     action: "/check",
-    image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
+    // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
+    image: "/assets/static/start.png",
     intents: [<Button value="action">put a cat on your shoulder</Button>],
   });
 });
@@ -51,8 +52,6 @@ app
   )
   .frame("/create", (c) => {
     const { buttonValue, deriveState } = c;
-    // const imageUrl = c.res;
-    console.log(`c.frameData: ${JSON.stringify(c)}`);
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
       if (buttonValue === "up")

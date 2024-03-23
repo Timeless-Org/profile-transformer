@@ -15,6 +15,7 @@ export const GET = async (request: Request) => {
   const catImage = await fetch(new URL("./cat.png", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
+
   return new ImageResponse(
     (
       <div
@@ -44,6 +45,11 @@ export const GET = async (request: Request) => {
           }}
         />
       </div>
-    )
+    ),
+    {
+      headers: {
+        "Content-Disposition": 'attachment; filename="meme.png"',
+      },
+    }
   );
 };
