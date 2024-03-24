@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox-viem";
 import "dotenv/config";
+import "@nomicfoundation/hardhat-verify";
 
 if (!process.env.PRIVATE_KEY) {
   throw new Error("PRIVATE_KEY is not set");
@@ -25,6 +26,24 @@ const config: HardhatUserConfig = {
       accounts: [`0x${process.env.PRIVATE_KEY}`],
       chainId: 84532,
     },
+  },
+  etherscan: {
+    apiKey: {
+      base_sepolia: "5a112fff-727a-4f16-b4ff-24b4c51f832a",
+    },
+    customChains: [
+      {
+        network: "base_sepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://base-sepolia.blockscout.com/api",
+          browserURL: "https://base-sepolia.blockscout.com",
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: true,
   },
 };
 

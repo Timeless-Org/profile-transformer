@@ -7,6 +7,12 @@
 3. Run `npx hardhat ignition deploy ./ignition/modules/CatMeme.deoloy.ts --network base_sepolia`
 4. Run `npx hardhat ignition deploy ./ignition/modules/CatMeme.deoloy.ts --network zora_sepolia`
 
+## Verify Contract
+
+```bash
+npx hardhat verify --network base_sepolia <contract address>
+```
+
 ## Contract
 
 | ContractName | Network | Address |

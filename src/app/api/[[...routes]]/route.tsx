@@ -26,15 +26,13 @@ const app = new Frog<{ State: State }>({
     cloudinary: false,
   },
   hub: neynarHub({ apiKey: "NEYNAR_FROG_FM" }),
-  // verify: "silent",
+  verify: process.env.NODE_ENV === "development" ? "silent" : true,
 });
 
 app.frame("/", (c) => {
   const imagePath = "/assets/static/start.png";
   return c.res({
     action: "/check",
-    // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
-    // image: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/static/start.png`,
     image: imagePath,
     intents: [<Button value="action">put a cat on your shoulder</Button>],
   });
@@ -163,12 +161,7 @@ app
         <Button value="mint" action="/create">
           ←
         </Button>,
-        <Button.Transaction
-          target={`/mint/${imageUrl}`}
-          action={`/mint/${imageUrl}`}
-        >
-          Mint
-        </Button.Transaction>,
+        <Button.Transaction target={`/mint/${imageUrl}`}>Mint</Button.Transaction>,
         <Button.Link
           href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
             state.top
@@ -180,16 +173,16 @@ app
     });
   });
 
-app.transaction("/mint/:imageUrl", (c) => {
-    const { imageUrl } = c.req.param();
-    console.log(`imageUrl: ${imageUrl}`);
-    return c.contract({
-      abi,
-      chainId: "eip155:84532",
-      functionName: "safeMint",
-      to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
-      args: [`${imageUrl}.png`],
-    });
+app.transaction("/mint/:imageUrl", async (c) => {
+  const { imageUrl } = c.req.param();
+  console.log(`imageUrl: ${imageUrl}`);
+  return c.contract({
+    abi,
+    chainId: "eip155:84532",
+    functionName: "safeMint",
+    to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
+    args: [`${imageUrl}.png`],
+  });
 });
 
 devtools(app, { appFid: 227285, serveStatic });
