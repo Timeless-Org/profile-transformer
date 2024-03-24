@@ -28,6 +28,9 @@ const app = new Frog<{ State: State }>({
   },
   hub: neynarHub({ apiKey: "NEYNAR_FROG_FM" }),
   verify: process.env.NODE_ENV === "development" ? "silent" : true,
+  headers: {
+    "Cache-Control": "max-age=0",
+  },
 });
 
 app.frame("/", (c) => {
