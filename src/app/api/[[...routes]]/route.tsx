@@ -178,7 +178,7 @@ app.transaction("/mint/:imageUrl", async (c) => {
   console.log(`imageUrl: ${imageUrl}`);
   return c.contract({
     abi,
-    chainId: "eip155:8453",
+    chainId: "eip155:84532",
     functionName: "safeMint",
     to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
     args: [
