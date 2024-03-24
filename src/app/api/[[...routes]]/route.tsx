@@ -2,6 +2,7 @@
 
 import { Button, Frog } from "frog";
 import { neynar } from "frog/middlewares";
+import { neynar as neynarHub } from "frog/hubs";
 import { handle } from "frog/next";
 import { v2 as cloudinary } from "cloudinary";
 import abi from "../../utils/abi.json";
@@ -24,6 +25,8 @@ const app = new Frog<{ State: State }>({
     direction: "vertical",
     cloudinary: false,
   },
+  hub: neynarHub({ apiKey: "NEYNAR_FROG_FM" }),
+  // verify: "silent",
 });
 
 app.frame("/", (c) => {
@@ -160,7 +163,10 @@ app
         <Button value="mint" action="/create">
           ←
         </Button>,
-        <Button.Transaction target={`/mint/${imageUrl}`}>
+        <Button.Transaction
+          target={`/mint/${imageUrl}`}
+          action={`/mint/${imageUrl}`}
+        >
           Mint
         </Button.Transaction>,
         <Button.Link
@@ -175,17 +181,18 @@ app
   });
 
 app.transaction("/mint/:imageUrl", (c) => {
-  const { imageUrl } = c.req.param();
-  return c.contract({
-    abi,
-    chainId: "eip155:84532",
-    functionName: "safeMint",
-    args: [`${imageUrl}.png`],
-    to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
-  });
+    const { imageUrl } = c.req.param();
+    console.log(`imageUrl: ${imageUrl}`);
+    return c.contract({
+      abi,
+      chainId: "eip155:84532",
+      functionName: "safeMint",
+      to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
+      args: [`${imageUrl}.png`],
+    });
 });
 
-devtools(app, { serveStatic });
+devtools(app, { appFid: 227285, serveStatic });
 
 export const GET = handle(app);
 export const POST = handle(app);
