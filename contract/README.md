@@ -17,5 +17,5 @@ npx hardhat verify --network base_sepolia <contract address>
 
 | ContractName | Network | Address |
 | :----------: | :-----: | :-----: |
-| **CatMeme** | base_sepolia | [`0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7`](https://sepolia.basescan.org/address/0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7) |
-| **CatMeme** | zora_sepolia | [`0x1396DeD68Be944b4f350968d62912babEDD8b245`](https://999999999.testnet.routescan.io/token/0x1396DeD68Be944b4f350968d62912babEDD8b245) |
+| **CatMeme** | base_sepolia | [`0x869a39930Fb203deE78153e2Ed0393CDd975f0ff`](https://sepolia.basescan.org/address/0x869a39930Fb203deE78153e2Ed0393CDd975f0ff) |
+| **ShoulderCatMeme** | base_sepolia | [`0x797447EA1AC4A95d15a9f506be4FD71429219926`](https://sepolia.basescan.org/address/0x797447EA1AC4A95d15a9f506be4FD71429219926) |

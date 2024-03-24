@@ -11,10 +11,11 @@ export const GET = async (request: Request) => {
   const top = `${params.get("top")}%`;
   const left = `${params.get("left")}%`;
   const size = `${params.get("size")}px`;
+  const cat = params.get("cat");
   const imageData = await fetch(new URL(pfpUrl || "", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-  const catImage = await fetch(new URL("./cat.png", import.meta.url)).then(
+  const catImage = await fetch(new URL(`/assets/static/cat${cat}.png`, import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
 

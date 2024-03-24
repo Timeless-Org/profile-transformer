@@ -36,13 +36,9 @@ const app = new Frog<{ State: State }>({
 app.frame("/", (c) => {
   const imagePath = "/assets/static/start.png";
   return c.res({
-    action: "/create",
+    action: "/check",
     image: imagePath,
-    intents: [
-      <Button value="" action="/create">
-        put a cat on your shoulder
-      </Button>,
-    ],
+    intents: [<Button>put a cat on your shoulder</Button>],
   });
 });
 
@@ -52,11 +48,28 @@ app.frame("/check", (c) => {
     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
     intents: [
       // <Button value="check">Check for eligibility</Button>,
-      // <Button value="mint">Mint cat NFT</Button>,
-      <Button value="" action="/create">
-        Create New PFP
-      </Button>,
+      <Button.Transaction target="/mint-cat/2" action="/create/2">
+        Mint cat NFT #2
+      </Button.Transaction>,
+      <Button.Transaction target="/mint-cat/3" action="/create/3">
+        Mint cat NFT #3
+      </Button.Transaction>,
+      <Button.Transaction target="/mint-cat/4" action="/create/4">
+        Mint cat NFT #4
+      </Button.Transaction>,
+      <Button action="/create/1">Create New PFP free</Button>,
     ],
+  });
+});
+
+app.transaction("/mint-cat/:id", async (c) => {
+  const { id } = c.req.param();
+  return c.contract({
+    abi,
+    chainId: "eip155:84532",
+    functionName: "safeMint",
+    to: "0x869a39930Fb203deE78153e2Ed0393CDd975f0ff",
+    args: [`cat/cat${id}.png`],
   });
 });
 
@@ -67,7 +80,8 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/create", (c) => {
+  .frame("/create/:id", (c) => {
+    const { id } = c.req.param();
     const { buttonValue, deriveState } = c;
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
@@ -87,15 +101,18 @@ app
         previousState.direction !== "horizon"
           ? (previousState.direction = "horizon")
           : "";
+      if (Number(id) >= 1 && Number(id) !== previousState.cat) {
+        previousState.cat = Number(id);
+      }
     }) as State;
 
     return c.res({
-      action: `/create`,
-      image: `${
-        process.env.NEXT_PUBLIC_SITE_URL
-      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+      action: `/create/${state.cat}`,
+      image: `${process.env.NEXT_PUBLIC_SITE_URL}/create/${
+        state.cat
+      }?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }`,
+      }&cat=${state.cat}`,
       intents: [
         <Button value={state.direction === "vertical" ? "up" : "left"}>
           {state.direction === "vertical" ? "👆" : "👈"}
@@ -129,7 +146,7 @@ app
         process.env.NEXT_PUBLIC_SITE_URL
       }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }`,
+      }&cat=${state.cat}`,
       intents: [],
     });
   });
@@ -153,13 +170,13 @@ app
 
     return c.res({
       action: `/resize`,
-      image: `${
-        process.env.NEXT_PUBLIC_SITE_URL
-      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+      image: `${process.env.NEXT_PUBLIC_SITE_URL}/create/${
+        state.cat
+      }?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }`,
+      }&cat=${state.cat}`,
       intents: [
-        <Button value="mint" action="/create">
+        <Button value="mint" action={`/create/${state.cat}`}>
           ←
         </Button>,
         <Button value="down">-</Button>,
@@ -169,7 +186,7 @@ app
             process.env.NEXT_PUBLIC_SITE_URL
           }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
             state.size
-          }.png`}
+          }&cat=${state.cat}.png`}
           action="/upload"
         >
           Proceed
@@ -207,16 +224,16 @@ app
       action: "/mint",
       image: buttonValue || "",
       intents: [
-        <Button action="/resize">
-          ←
-        </Button>,
+        <Button action="/resize">←</Button>,
         <Button.Transaction target={`/mint/${imageUrl}`}>
           Mint
         </Button.Transaction>,
         <Button.Link
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
+          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create/${state.cat}?top=${
             state.top
-          }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${state.left}&size=${state.size}`}
+          }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${
+            state.left
+          }&size=${state.size}&cat=${state.cat}`}
         >
           Download
         </Button.Link>,
