@@ -22,6 +22,7 @@ const app = new Frog<{ State: State }>({
   initialState: {
     top: 50,
     left: 50,
+    size: 120,
     direction: "vertical",
     cloudinary: false,
   },
@@ -32,25 +33,25 @@ const app = new Frog<{ State: State }>({
 app.frame("/", (c) => {
   const imagePath = "/assets/static/start.png";
   return c.res({
-    action: "/check",
+    action: "/create",
     image: imagePath,
-    intents: [<Button value="action">put a cat on your shoulder</Button>],
+    intents: [<Button>put a cat on your shoulder</Button>],
   });
 });
 
-app.frame("/check", (c) => {
-  return c.res({
-    action: "/create",
-    image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
-    intents: [
-      // <Button value="check">Check for eligibility</Button>,
-      // <Button value="mint">Mint cat NFT</Button>,
-      <Button value="" action="/create">
-        Create New PFP
-      </Button>,
-    ],
-  });
-});
+// app.frame("/check", (c) => {
+//   return c.res({
+//     action: "/create",
+//     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
+//     intents: [
+//       // <Button value="check">Check for eligibility</Button>,
+//       // <Button value="mint">Mint cat NFT</Button>,
+//       <Button value="" action="/create">
+//         Create New PFP
+//       </Button>,
+//     ],
+//   });
+// });
 
 app
   .use(
@@ -85,7 +86,9 @@ app
       action: `/create`,
       image: `${
         process.env.NEXT_PUBLIC_SITE_URL
-      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}`,
+      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+        state.size
+      }`,
       intents: [
         <Button value={state.direction === "vertical" ? "up" : "left"}>
           {state.direction === "vertical" ? "👆" : "👈"}
@@ -96,14 +99,7 @@ app
         <Button value={state.direction === "vertical" ? "horizon" : "vertical"}>
           {state.direction === "vertical" ? "R / L" : "UP / DOWN"}
         </Button>,
-        <Button
-          value={`${
-            process.env.NEXT_PUBLIC_SITE_URL
-          }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}.png`}
-          action="/upload"
-        >
-          Proceed
-        </Button>,
+        <Button action="/resize">Proceed</Button>,
       ],
     });
   });
@@ -124,8 +120,54 @@ app
       action: `/display`,
       image: `${
         process.env.NEXT_PUBLIC_SITE_URL
-      }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}`,
+      }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+        state.size
+      }`,
       intents: [],
+    });
+  });
+
+app
+  .use(
+    neynar({
+      apiKey: "NEYNAR_FROG_FM",
+      features: ["interactor"],
+    })
+  )
+  .frame("/resize", (c) => {
+    const { buttonValue, deriveState } = c;
+    const { pfpUrl } = c.var.interactor || {};
+    const state = deriveState((previousState: any) => {
+      if (buttonValue === "down")
+        previousState.size >= 10 ? (previousState.size -= 10) : "";
+      if (buttonValue === "up")
+        previousState.size <= 480 ? (previousState.size += 10) : "";
+    }) as State;
+
+    return c.res({
+      action: `/resize`,
+      image: `${
+        process.env.NEXT_PUBLIC_SITE_URL
+      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+        state.size
+      }`,
+      intents: [
+        <Button value="mint" action="/create">
+          ←
+        </Button>,
+        <Button value="down">-</Button>,
+        <Button value="up">+</Button>,
+        <Button
+          value={`${
+            process.env.NEXT_PUBLIC_SITE_URL
+          }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+            state.size
+          }.png`}
+          action="/upload"
+        >
+          Proceed
+        </Button>,
+      ],
     });
   });
 
@@ -158,14 +200,16 @@ app
       action: "/mint",
       image: buttonValue || "",
       intents: [
-        <Button value="mint" action="/create">
+        <Button action="/resize">
           ←
         </Button>,
-        <Button.Transaction target={`/mint/${imageUrl}`}>Mint</Button.Transaction>,
+        <Button.Transaction target={`/mint/${imageUrl}`}>
+          Mint
+        </Button.Transaction>,
         <Button.Link
           href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
             state.top
-          }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${state.left}`}
+          }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${state.left}&size=${state.size}`}
         >
           Download
         </Button.Link>,
@@ -181,9 +225,7 @@ app.transaction("/mint/:imageUrl", async (c) => {
     chainId: "eip155:84532",
     functionName: "safeMint",
     to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
-    args: [
-      `1711276379026.png`,
-    ],
+    args: [`${imageUrl}.png`],
   });
 });
 

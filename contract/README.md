@@ -5,7 +5,7 @@
 1. Run `npm install`
 2. Run `npx hardhat compile`
 3. Run `npx hardhat ignition deploy ./ignition/modules/CatMeme.deoloy.ts --network base_sepolia`
-4. Run `npx hardhat ignition deploy ./ignition/modules/CatMeme.deoloy.ts --network zora_sepolia`
+4. Run `npx hardhat ignition deploy ./ignition/modules/ShoulderCatMeme.deoloy.ts --network base_sepolia`
 
 ## Verify Contract
 

@@ -10,6 +10,7 @@ export const GET = async (request: Request) => {
   const pfpUrl = params.get("pfpUrl");
   const top = `${params.get("top")}%`;
   const left = `${params.get("left")}%`;
+  const size = `${params.get("size")}px`;
   const imageData = await fetch(new URL(pfpUrl || "", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
@@ -46,7 +47,7 @@ export const GET = async (request: Request) => {
           alt="img2"
           style={{
             position: "absolute",
-            width: "120px",
+            width: size,
             top: top,
             left: left,
             transform: "translate(-50%, -50%)",
