@@ -35,23 +35,27 @@ app.frame("/", (c) => {
   return c.res({
     action: "/create",
     image: imagePath,
-    intents: [<Button>put a cat on your shoulder</Button>],
+    intents: [
+      <Button value="" action="/create">
+        put a cat on your shoulder
+      </Button>,
+    ],
   });
 });
 
-// app.frame("/check", (c) => {
-//   return c.res({
-//     action: "/create",
-//     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
-//     intents: [
-//       // <Button value="check">Check for eligibility</Button>,
-//       // <Button value="mint">Mint cat NFT</Button>,
-//       <Button value="" action="/create">
-//         Create New PFP
-//       </Button>,
-//     ],
-//   });
-// });
+app.frame("/check", (c) => {
+  return c.res({
+    action: "/create",
+    image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
+    intents: [
+      // <Button value="check">Check for eligibility</Button>,
+      // <Button value="mint">Mint cat NFT</Button>,
+      <Button value="" action="/create">
+        Create New PFP
+      </Button>,
+    ],
+  });
+});
 
 app
   .use(
