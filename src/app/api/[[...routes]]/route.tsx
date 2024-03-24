@@ -27,11 +27,12 @@ const app = new Frog<{ State: State }>({
 });
 
 app.frame("/", (c) => {
+  const imagePath = "/assets/static/start.png";
   return c.res({
     action: "/check",
     // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
     // image: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/static/start.png`,
-    image: `/assets/static/start.png`,
+    image: imagePath,
     intents: [<Button value="action">put a cat on your shoulder</Button>],
   });
 });
@@ -159,7 +160,7 @@ app
         <Button value="mint" action="/create">
           ←
         </Button>,
-        <Button.Transaction target="/mint" action="/mint">
+        <Button.Transaction target={`/mint/${imageUrl}`}>
           Mint
         </Button.Transaction>,
         <Button.Link
@@ -173,14 +174,13 @@ app
     });
   });
 
-app.transaction("/mint", (c) => {
-  const { buttonValue } = c;
-  console.log(`buttonValue: ${buttonValue}`);
+app.transaction("/mint/:imageUrl", (c) => {
+  const { imageUrl } = c.req.param();
   return c.contract({
     abi,
     chainId: "eip155:84532",
     functionName: "mint",
-    args: [`${buttonValue}.png`],
+    args: [`${imageUrl}.png`],
     to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
   });
 });
