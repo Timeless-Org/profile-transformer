@@ -3,12 +3,17 @@
 import { Button, Frog } from "frog";
 import { neynar } from "frog/middlewares";
 import { handle } from "frog/next";
+import { v2 as cloudinary } from "cloudinary";
+import abi from "../../utils/abi.json";
+import { State } from "../../utils/types";
+import { devtools } from "frog/dev";
+import { serveStatic } from "frog/serve-static";
 
-interface State {
-  top: number;
-  left: number;
-  direction: string;
-}
+cloudinary.config({
+  cloud_name: "dtwhotpyc",
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_SECRET,
+});
 
 const app = new Frog<{ State: State }>({
   assetsPath: "/",
@@ -17,6 +22,7 @@ const app = new Frog<{ State: State }>({
     top: 50,
     left: 50,
     direction: "vertical",
+    cloudinary: false,
   },
 });
 
@@ -25,14 +31,14 @@ app.frame("/", (c) => {
     action: "/check",
     // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
     // image: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/static/start.png`,
-    image: `https://profile-transformer.vercel.app/assets/static/start.png`,
+    image: `/assets/static/start.png`,
     intents: [<Button value="action">put a cat on your shoulder</Button>],
   });
 });
 
 app.frame("/check", (c) => {
   return c.res({
-    action: "/check",
+    action: "/create",
     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
     intents: [
       // <Button value="check">Check for eligibility</Button>,
@@ -88,7 +94,74 @@ app
         <Button value={state.direction === "vertical" ? "horizon" : "vertical"}>
           {state.direction === "vertical" ? "R / L" : "UP / DOWN"}
         </Button>,
-        // <Button value="proceed">Proceed</Button>,
+        <Button
+          value={`${
+            process.env.NEXT_PUBLIC_SITE_URL
+          }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}.png`}
+          action="/upload"
+        >
+          Proceed
+        </Button>,
+      ],
+    });
+  });
+
+app
+  .use(
+    neynar({
+      apiKey: "NEYNAR_FROG_FM",
+      features: ["interactor"],
+    })
+  )
+  .frame("/display", (c) => {
+    const { deriveState } = c;
+    const { pfpUrl } = c.var.interactor || {};
+    const state = deriveState(() => {}) as State;
+
+    return c.res({
+      action: `/display`,
+      image: `${
+        process.env.NEXT_PUBLIC_SITE_URL
+      }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}`,
+      intents: [],
+    });
+  });
+
+app
+  .use(
+    neynar({
+      apiKey: "NEYNAR_FROG_FM",
+      features: ["interactor"],
+    })
+  )
+  .frame("/upload", (c) => {
+    const { buttonValue, deriveState } = c;
+    const { pfpUrl } = c.var.interactor || {};
+    const imageUrl = Date.now().toString();
+    const state = deriveState((previousState: any) => {
+      if (!previousState.cloudinary) {
+        previousState.cloudinary = true;
+        cloudinary.uploader.upload(
+          buttonValue || "",
+          { public_id: imageUrl },
+          function (error, result) {
+            console.log(result);
+            previousState.cloudinary = false;
+          }
+        );
+      }
+    }) as State;
+
+    return c.res({
+      action: "/mint",
+      image: buttonValue || "",
+      intents: [
+        <Button value="mint" action="/create">
+          ←
+        </Button>,
+        <Button.Transaction target="/mint" action="/mint">
+          Mint
+        </Button.Transaction>,
         <Button.Link
           href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
             state.top
@@ -99,6 +172,20 @@ app
       ],
     });
   });
+
+app.transaction("/mint", (c) => {
+  const { buttonValue } = c;
+  console.log(`buttonValue: ${buttonValue}`);
+  return c.contract({
+    abi,
+    chainId: "eip155:84532",
+    functionName: "mint",
+    args: [`${buttonValue}.png`],
+    to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
+  });
+});
+
+devtools(app, { serveStatic });
 
 export const GET = handle(app);
 export const POST = handle(app);

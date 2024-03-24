@@ -13,9 +13,9 @@ export const GET = async (request: Request) => {
   const imageData = await fetch(new URL(pfpUrl || "", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-  const catImage = await fetch(new URL("./cat.png", import.meta.url)).then(
-    (res) => res.arrayBuffer()
-  );
+  const catImage = await fetch(
+    new URL("../create/cat.png", import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
@@ -53,11 +53,6 @@ export const GET = async (request: Request) => {
           }}
         />
       </div>
-    ),
-    {
-      headers: {
-        "Content-Disposition": 'attachment; filename="meme.png"',
-      },
-    }
+    )
   );
 };
