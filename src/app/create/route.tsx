@@ -15,9 +15,9 @@ export const GET = async (request: Request) => {
   const imageData = await fetch(new URL(pfpUrl || "", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-  const catImage = await fetch(new URL(`/assets/static/cat${cat}.png`, import.meta.url)).then(
-    (res) => res.arrayBuffer()
-  );
+  const catImage = await fetch(
+    new URL(`../../public/assets/static/cat${cat}.png`, import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (

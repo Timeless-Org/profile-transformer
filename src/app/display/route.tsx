@@ -16,7 +16,7 @@ export const GET = async (request: Request) => {
     (res) => res.arrayBuffer()
   );
   const catImage = await fetch(
-    new URL(`/assets/static/cat${cat}.png`, import.meta.url)
+    new URL(`../../public/assets/static/cat${cat}.png`, import.meta.url)
   ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(

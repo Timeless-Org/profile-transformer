@@ -5,7 +5,8 @@ import { neynar } from "frog/middlewares";
 import { neynar as neynarHub } from "frog/hubs";
 import { handle } from "frog/next";
 import { v2 as cloudinary } from "cloudinary";
-import abi from "../../utils/abi.json";
+import catMemeAbi from "../../utils/catMemeAbi.json";
+import shoulderCatMemeAbi from "../../utils/shoulderCatMemeAbi.json";
 import { State } from "../../utils/types";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
@@ -65,7 +66,7 @@ app.frame("/check", (c) => {
 app.transaction("/mint-cat/:id", async (c) => {
   const { id } = c.req.param();
   return c.contract({
-    abi,
+    abi: catMemeAbi,
     chainId: "eip155:84532",
     functionName: "safeMint",
     to: "0x869a39930Fb203deE78153e2Ed0393CDd975f0ff",
@@ -245,7 +246,7 @@ app.transaction("/mint/:imageUrl", async (c) => {
   const { imageUrl } = c.req.param();
   console.log(`imageUrl: ${imageUrl}`);
   return c.contract({
-    abi,
+    abi: shoulderCatMemeAbi,
     chainId: "eip155:84532",
     functionName: "safeMint",
     to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
