@@ -11,13 +11,21 @@ export const GET = async (request: Request) => {
   const top = `${params.get("top")}%`;
   const left = `${params.get("left")}%`;
   const size = `${params.get("size")}px`;
-  const cat = params.get("cat");
+  const img = params.get("img");
   const imageData = await fetch(new URL(pfpUrl || "", import.meta.url)).then(
     (res) => res.arrayBuffer()
   );
-  const catImage = await fetch(
-    new URL(`../../public/assets/static/cat${cat}.png`, import.meta.url)
-  ).then((res) => res.arrayBuffer());
+
+  let memeImage;
+  if (img === "hat") {
+    memeImage = await fetch(
+      new URL(`../../public/assets/static/hat.png`, import.meta.url)
+    ).then((res) => res.arrayBuffer());
+  } else {
+    memeImage = await fetch(
+      new URL(`../../public/assets/static/enjoy.png`, import.meta.url)
+    ).then((res) => res.arrayBuffer());
+  }
 
   return new ImageResponse(
     (
@@ -44,7 +52,7 @@ export const GET = async (request: Request) => {
           }}
         />
         <img
-          src={catImage}
+          src={memeImage}
           alt="img2"
           style={{
             position: "absolute",

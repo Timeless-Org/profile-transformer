@@ -5,8 +5,7 @@ import { neynar } from "frog/middlewares";
 import { neynar as neynarHub } from "frog/hubs";
 import { handle } from "frog/next";
 import { v2 as cloudinary } from "cloudinary";
-import catMemeAbi from "../../utils/catMemeAbi.json";
-import shoulderCatMemeAbi from "../../utils/shoulderCatMemeAbi.json";
+import profileMemeAbi from "../../utils/profileMemeAbi.json";
 import { State } from "../../utils/types";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
@@ -26,6 +25,7 @@ const app = new Frog<{ State: State }>({
     size: 120,
     direction: "vertical",
     cloudinary: false,
+    img: "enjoy",
   },
   hub: neynarHub({ apiKey: "NEYNAR_FROG_FM" }),
   verify: process.env.NODE_ENV === "development" ? "silent" : true,
@@ -35,11 +35,12 @@ const app = new Frog<{ State: State }>({
 });
 
 app.frame("/", (c) => {
-  const imagePath = "/assets/static/start.png";
+  // const imagePath = "/assets/static/start.png";
   return c.res({
     action: "/check",
-    image: imagePath,
-    intents: [<Button>put a cat on your shoulder</Button>],
+    // image: imagePath,
+    image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
+    intents: [<Button>put a meme on your profile</Button>],
   });
 });
 
@@ -48,29 +49,9 @@ app.frame("/check", (c) => {
     action: "/create",
     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
     intents: [
-      // <Button value="check">Check for eligibility</Button>,
-      <Button.Transaction target="/mint-cat/2" action="/create/2">
-        Mint cat NFT #2
-      </Button.Transaction>,
-      <Button.Transaction target="/mint-cat/3" action="/create/3">
-        Mint cat NFT #3
-      </Button.Transaction>,
-      <Button.Transaction target="/mint-cat/4" action="/create/4">
-        Mint cat NFT #4
-      </Button.Transaction>,
-      <Button action="/create/1">Create New PFP free</Button>,
+      <Button action="/create/enjoy">Enjoy</Button>,
+      <Button action="/create/hat">Degen Hat</Button>,
     ],
-  });
-});
-
-app.transaction("/mint-cat/:id", async (c) => {
-  const { id } = c.req.param();
-  return c.contract({
-    abi: catMemeAbi,
-    chainId: "eip155:84532",
-    functionName: "safeMint",
-    to: "0x869a39930Fb203deE78153e2Ed0393CDd975f0ff",
-    args: [`cat/cat${id}.png`],
   });
 });
 
@@ -81,8 +62,9 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/create/:id", (c) => {
-    const { id } = c.req.param();
+  .frame("/create/:img", (c) => {
+    const { img } = c.req.param();
+    console.log(`img: ${img}`);
     const { buttonValue, deriveState } = c;
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
@@ -102,18 +84,18 @@ app
         previousState.direction !== "horizon"
           ? (previousState.direction = "horizon")
           : "";
-      if (Number(id) >= 1 && Number(id) !== previousState.cat) {
-        previousState.cat = Number(id);
+      if (img !== previousState.img) {
+        previousState.img = img;
       }
     }) as State;
 
     return c.res({
-      action: `/create/${state.cat}`,
-      image: `${process.env.NEXT_PUBLIC_SITE_URL}/create/${
-        state.cat
-      }?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+      action: `/create/${state.img}`,
+      image: `${
+        process.env.NEXT_PUBLIC_SITE_URL
+      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }&cat=${state.cat}`,
+      }&img=${state.img}`,
       intents: [
         <Button value={state.direction === "vertical" ? "up" : "left"}>
           {state.direction === "vertical" ? "👆" : "👈"}
@@ -147,7 +129,7 @@ app
         process.env.NEXT_PUBLIC_SITE_URL
       }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }&cat=${state.cat}`,
+      }&img=${state.img}`,
       intents: [],
     });
   });
@@ -171,13 +153,13 @@ app
 
     return c.res({
       action: `/resize`,
-      image: `${process.env.NEXT_PUBLIC_SITE_URL}/create/${
-        state.cat
-      }?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
+      image: `${
+        process.env.NEXT_PUBLIC_SITE_URL
+      }/create?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
         state.size
-      }&cat=${state.cat}`,
+      }&img=${state.img}`,
       intents: [
-        <Button value="mint" action={`/create/${state.cat}`}>
+        <Button value="mint" action={`/create/${state.img}`}>
           ←
         </Button>,
         <Button value="down">-</Button>,
@@ -187,7 +169,7 @@ app
             process.env.NEXT_PUBLIC_SITE_URL
           }/display?top=${state.top.toString()}&pfpUrl=${pfpUrl}&left=${state.left.toString()}&size=${
             state.size
-          }&cat=${state.cat}.png`}
+          }&img=${state.img}`}
           action="/upload"
         >
           Proceed
@@ -230,11 +212,11 @@ app
           Mint
         </Button.Transaction>,
         <Button.Link
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create/${state.cat}?top=${
+          href={`${process.env.NEXT_PUBLIC_SITE_URL}/create?top=${
             state.top
           }&pfpUrl=${encodeURIComponent(pfpUrl || "")}&left=${
             state.left
-          }&size=${state.size}&cat=${state.cat}`}
+          }&size=${state.size}&img=${state.img}`}
         >
           Download
         </Button.Link>,
@@ -246,11 +228,11 @@ app.transaction("/mint/:imageUrl", async (c) => {
   const { imageUrl } = c.req.param();
   console.log(`imageUrl: ${imageUrl}`);
   return c.contract({
-    abi: shoulderCatMemeAbi,
+    abi: profileMemeAbi,
     chainId: "eip155:84532",
     functionName: "safeMint",
-    to: "0x1B9B93331BB7701baE72dE78F8a4647c06f8bAE7",
-    args: [`${imageUrl}.png`],
+    to: "0x300E1259d2F39C2bF341AA4fF536f4FC361627ff",
+    args: [`${imageUrl}`],
   });
 });
 

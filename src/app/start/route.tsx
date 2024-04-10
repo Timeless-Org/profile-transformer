@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
@@ -12,12 +11,17 @@ export const GET = async (request: Request) => {
     new URL("../../public/assets/fonts/ariblk.ttf", import.meta.url)
   ).then((res) => res.arrayBuffer());
 
-  const enjoyImage = await fetch(
-    new URL("../../public/assets/static/enjoy.png", import.meta.url)
-  ).then((res) => res.arrayBuffer());
-  const hatImage = await fetch(
-    new URL("../../public/assets/static/hat.png", import.meta.url)
-  ).then((res) => res.arrayBuffer());
+  const beforeData = await fetch(new URL("./before.png", import.meta.url)).then(
+    (res) => res.arrayBuffer()
+  );
+
+  const afterData = await fetch(new URL("./after.png", import.meta.url)).then(
+    (res) => res.arrayBuffer()
+  );
+
+  const arrowImageData = await fetch(new URL("./arrow.png", import.meta.url)).then(
+    (res) => res.arrayBuffer()
+  );
 
   return new ImageResponse(
     (
@@ -28,8 +32,9 @@ export const GET = async (request: Request) => {
           backgroundSize: "100% 100%",
           display: "flex",
           flexDirection: "column",
+          flexWrap: "nowrap",
           height: "100%",
-          justifyContent: "flex-start",
+          justifyContent: "space-around",
           textAlign: "center",
           width: "100%",
         }}
@@ -39,38 +44,41 @@ export const GET = async (request: Request) => {
             color: "white",
             fontSize: 50,
             fontFamily: '"Mochiy Pop One"',
-            marginTop: 50,
           }}
         >
-          Which meme do you want?
+          put a meme on your profile
+        </p>
+        <p
+          style={{
+            color: "white",
+            fontSize: 36,
+            fontStyle: "normal",
+            marginTop: 30,
+            padding: "0 360px",
+            fontFamily: '"AriBlk"',
+          }}
+        >
+          Transform your PFP into an Awesome Meme
         </p>
         <div
           style={{
-            alignItems: "center",
+            color: "white",
+            marginTop: 30,
+            padding: "0 120px",
             display: "flex",
-            flexDirection: "row",
-            height: "100%",
-            justifyContent: "space-around",
+            justifyContent: "center",
             textAlign: "center",
             width: "100%",
+            alignItems: "center",
+            gap: "50px",
           }}
         >
-          <img
-            src={enjoyImage}
-            width="300"
-            alt="img1"
-            style={{
-              alignSelf: "center",
-            }}
-          />
-          <img
-            src={hatImage}
-            width="300"
-            alt="img2"
-            style={{
-              alignSelf: "center",
-            }}
-          />
+          {/* @ts-ignore */}
+          <img width="200" alt="img1" src={beforeData} />
+          {/* @ts-ignore */}
+          <img width="170" alt="img1" src={arrowImageData} />
+          {/* @ts-ignore */}
+          <img width="200" alt="img2" src={afterData} />
         </div>
       </div>
     ),

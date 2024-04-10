@@ -7,27 +7,38 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract ShoulderCatMeme is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
+contract ProfileMeme is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
 
     constructor()
-        ERC721("ShoulderCatMeme", "SCMM")
+        ERC721("Profile Meme", "PMM")
         Ownable(msg.sender)
     {}
 
     function safeMint(string memory uri) public {
         uint256 tokenId = _nextTokenId++;
-        _safeMint(msg.sender, tokenId);
 
-        string memory metaData = string(abi.encodePacked(
-            '{"name": "Shoulder Cat Meme NFT #',
-            Strings.toString(tokenId),
-            '", "description": "put a cat on your sholder", "image": "https://res.cloudinary.com/dtwhotpyc/image/upload/v1711263369/',
-            uri,
-            '.png"}'
-        ));
+        string memory metaData = string(
+            abi.encodePacked(
+                'data:application/json;base64,',
+                Base64.encode(
+                    bytes(
+                        abi.encodePacked(
+                            '{"name": "Profile Meme NFT #',
+                            Strings.toString(tokenId),
+                            '", "description": "Profile Meme NFT", "image": "https://res.cloudinary.com/dtwhotpyc/',
+                            uri,
+                            '.png"}'
+                        )
+                    )
+                )
+            )
+        );
+
         _setTokenURI(tokenId, metaData);
+        _safeMint(msg.sender, tokenId);
     }
 
     // The following functions are overrides required by Solidity.

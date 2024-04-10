@@ -4,5 +4,5 @@ export interface State {
   size: number;
   direction: string;
   cloudinary: boolean;
-  cat: number;
+  img: string;
 }
