@@ -11,17 +11,17 @@ export const GET = async (request: Request) => {
     new URL("../../public/assets/fonts/ariblk.ttf", import.meta.url)
   ).then((res) => res.arrayBuffer());
 
-  const beforeData = await fetch(new URL("./before.png", import.meta.url)).then(
-    (res) => res.arrayBuffer()
-  );
+  const beforeData = await fetch(
+    new URL("../../public/assets/static/before.png", import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
-  const afterData = await fetch(new URL("./after.png", import.meta.url)).then(
-    (res) => res.arrayBuffer()
-  );
+  const afterData = await fetch(
+    new URL("../../public/assets/static/after.png", import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
-  const arrowImageData = await fetch(new URL("./arrow.png", import.meta.url)).then(
-    (res) => res.arrayBuffer()
-  );
+  const arrowImageData = await fetch(
+    new URL("../../public/assets/static/arrow.png", import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
