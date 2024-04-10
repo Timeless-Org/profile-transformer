@@ -35,11 +35,11 @@ const app = new Frog<{ State: State }>({
 });
 
 app.frame("/", (c) => {
-  // const imagePath = "/assets/static/start.png";
+  const imagePath = "/assets/static/start.png";
   return c.res({
     action: "/check",
-    // image: imagePath,
-    image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
+    image: imagePath,
+    // image: `${process.env.NEXT_PUBLIC_SITE_URL}/start`,
     intents: [<Button>put a meme on your profile</Button>],
   });
 });
