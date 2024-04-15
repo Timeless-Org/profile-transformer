@@ -5,11 +5,12 @@
 1. Run `npm install`
 2. Run `npx hardhat compile`
 3. Run `npx hardhat ignition deploy ./ignition/modules/ProfileMeme.deoloy.ts --network base_sepolia`
+4. Run `npx hardhat ignition deploy ./ignition/modules/ProfileMeme.deoloy.ts --network base`
 
 ## Verify Contract
 
 ```bash
-npx hardhat verify --network base_sepolia <contract address>
+npx hardhat verify --network base_sepolia <contract address> 
 ```
 
 ## Contract

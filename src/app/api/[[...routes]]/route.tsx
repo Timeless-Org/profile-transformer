@@ -231,7 +231,7 @@ app.transaction("/mint/:imageUrl", async (c) => {
     abi: profileMemeAbi,
     chainId: "eip155:84532",
     functionName: "safeMint",
-    to: "0x300E1259d2F39C2bF341AA4fF536f4FC361627ff",
+    to: "0x3A387873306f907D34E879eb8b0c7C0033374523",
     args: [`${imageUrl}`],
   });
 });

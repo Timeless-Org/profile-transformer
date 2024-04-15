@@ -11,11 +11,14 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 contract ProfileMeme is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
     uint256 private _nextTokenId;
+    string private _baseUri;
 
-    constructor()
+    constructor(string memory baseUri)
         ERC721("Profile Meme", "PMM")
         Ownable(msg.sender)
-    {}
+    {
+        _baseUri = baseUri;
+    }
 
     function safeMint(string memory uri) public {
         uint256 tokenId = _nextTokenId++;
@@ -28,7 +31,8 @@ contract ProfileMeme is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
                         abi.encodePacked(
                             '{"name": "Profile Meme NFT #',
                             Strings.toString(tokenId),
-                            '", "description": "Profile Meme NFT", "image": "https://res.cloudinary.com/dtwhotpyc/',
+                            '", "description": "Profile Meme NFT", "image": "',
+                            _baseUri,
                             uri,
                             '.png"}'
                         )
@@ -41,7 +45,9 @@ contract ProfileMeme is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         _safeMint(msg.sender, tokenId);
     }
 
-    // The following functions are overrides required by Solidity.
+    function setBaseUri(string memory baseUri) public onlyOwner {
+        _baseUri = baseUri;
+    }
 
     function tokenURI(uint256 tokenId)
         public

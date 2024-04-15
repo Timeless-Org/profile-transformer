@@ -2,6 +2,8 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox-viem";
 import "dotenv/config";
 import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-foundry";
+
 
 if (!process.env.PRIVATE_KEY) {
   throw new Error("PRIVATE_KEY is not set");
