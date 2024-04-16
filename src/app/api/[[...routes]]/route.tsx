@@ -34,7 +34,7 @@ const app = new Frog<{ State: State }>({
   },
 });
 
-app.frame("/", (c) => {
+app.frame("/", async (c) => {
   const imagePath = "/assets/static/start.png";
   return c.res({
     action: "/check",
@@ -44,7 +44,7 @@ app.frame("/", (c) => {
   });
 });
 
-app.frame("/check", (c) => {
+app.frame("/check", async (c) => {
   return c.res({
     action: "/create",
     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
@@ -62,7 +62,7 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/create/:img", (c) => {
+  .frame("/create/:img", async (c) => {
     const { img } = c.req.param();
     console.log(`img: ${img}`);
     const { buttonValue, deriveState } = c;
@@ -118,7 +118,7 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/display", (c) => {
+  .frame("/display", async (c) => {
     const { deriveState } = c;
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState(() => {}) as State;
@@ -141,7 +141,7 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/resize", (c) => {
+  .frame("/resize", async (c) => {
     const { buttonValue, deriveState } = c;
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
@@ -185,7 +185,7 @@ app
       features: ["interactor"],
     })
   )
-  .frame("/upload", (c) => {
+  .frame("/upload", async (c) => {
     const { buttonValue, deriveState } = c;
     const { pfpUrl } = c.var.interactor || {};
     const imageUrl = Date.now().toString();
