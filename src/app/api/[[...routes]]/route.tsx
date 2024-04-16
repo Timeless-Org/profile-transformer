@@ -20,7 +20,7 @@ const app = new Frog<{ State: State }>({
   assetsPath: "/",
   basePath: "/api",
   initialState: {
-    top: 50,
+    top: 20,
     left: 50,
     size: 120,
     direction: "vertical",

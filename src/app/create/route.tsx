@@ -59,7 +59,7 @@ export const GET = async (request: Request) => {
             width: size,
             top: top,
             left: left,
-            transform: "translate(-50%, -150%)",
+            transform: "translate(-50%, -50%)",
           }}
         />
       </div>
