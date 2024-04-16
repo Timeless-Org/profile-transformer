@@ -55,14 +55,14 @@ export const GET = async (request: Request) => {
             width: "100%",
           }}
         >
-          <img
+          {/* <img
             src={enjoyImage}
             width="300"
             alt="img1"
             style={{
               alignSelf: "center",
             }}
-          />
+          /> */}
           <img
             src={hatImage}
             width="300"

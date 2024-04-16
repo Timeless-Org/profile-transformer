@@ -49,7 +49,7 @@ app.frame("/check", (c) => {
     action: "/create",
     image: `${process.env.NEXT_PUBLIC_SITE_URL}/check`,
     intents: [
-      <Button action="/create/enjoy">Enjoy</Button>,
+      // <Button action="/create/enjoy">Enjoy</Button>,
       <Button action="/create/hat">Degen Hat</Button>,
     ],
   });
@@ -69,13 +69,13 @@ app
     const { pfpUrl } = c.var.interactor || {};
     const state = deriveState((previousState: any) => {
       if (buttonValue === "up")
-        previousState.top >= 2 ? (previousState.top -= 2) : "";
+        previousState.top >= 5 ? (previousState.top -= 5) : "";
       if (buttonValue === "down")
-        previousState.top <= 98 ? (previousState.top += 2) : "";
+        previousState.top <= 98 ? (previousState.top += 5) : "";
       if (buttonValue === "left")
-        previousState.left >= 2 ? (previousState.left -= 2) : "";
+        previousState.left >= 5 ? (previousState.left -= 5) : "";
       if (buttonValue === "right")
-        previousState.left <= 98 ? (previousState.left += 2) : "";
+        previousState.left <= 98 ? (previousState.left += 5) : "";
       if (buttonValue === "vertical")
         previousState.direction !== "vertical"
           ? (previousState.direction = "vertical")
