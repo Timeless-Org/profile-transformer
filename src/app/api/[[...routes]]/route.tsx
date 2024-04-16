@@ -71,11 +71,11 @@ app
       if (buttonValue === "up")
         previousState.top >= 5 ? (previousState.top -= 5) : "";
       if (buttonValue === "down")
-        previousState.top <= 98 ? (previousState.top += 5) : "";
+        previousState.top <= 95 ? (previousState.top += 5) : "";
       if (buttonValue === "left")
-        previousState.left >= 5 ? (previousState.left -= 5) : "";
+        previousState.left >= 3 ? (previousState.left -= 3) : "";
       if (buttonValue === "right")
-        previousState.left <= 98 ? (previousState.left += 5) : "";
+        previousState.left <= 97 ? (previousState.left += 3) : "";
       if (buttonValue === "vertical")
         previousState.direction !== "vertical"
           ? (previousState.direction = "vertical")
